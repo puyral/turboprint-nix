@@ -9,6 +9,7 @@
   gimp,
   lib,
   buildFHSEnv,
+  cups,
   ...
 }:
 let
@@ -45,6 +46,7 @@ rec {
     buildInputs = [
       gtk2
       gimp
+      cups
     ];
     installPhase = ''
             runHook preInstall
@@ -58,6 +60,10 @@ rec {
       			rm -rf $out/usr
       			rm $out/lib/turboprint/gnomeapplet/tpgnomeapplet
       			wrapProgram $out/bin/turboprint
+      			wrapProgram $out/bin/tprintdaemon
+      			wrapProgram $out/bin/tpprint
+      			wrapProgram $out/bin/tpsetup
+      			wrapProgram $out/bin/turboprint-monitor
             runHook postInstall
       		'';
   };
