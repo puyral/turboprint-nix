@@ -1,4 +1,4 @@
-{ tprintdaemon, ... }:
+{ daemon, ... }:
 { config, lib, ... }:
 let
   cfg = config.services.turboprint;
@@ -53,7 +53,7 @@ in
       serviceConfig = {
         Restart = "always";
         WorkingDirectory = "/var/lib/turboprint";
-        ExecStart = "${tprintdaemon}/bin/tprintdaemon";
+        ExecStart = "${daemon}/bin/tprintdaemon";
       };
     };
   };
