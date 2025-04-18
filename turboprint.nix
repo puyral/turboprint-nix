@@ -61,17 +61,15 @@ rec {
             runHook postInstall
       		'';
   };
-  withEnv = buildFHSEnv {
-    inherit pname version meta;
-    targetPkgs = _: turboprint.buildInputs ++ [ turboprint ];
-    runScript = "${turboprint}/bin/turboprint";
-  };
+  withEnv = mkEnv "turboprint" (tb: "${tb}/bin/turboprint");
 
-  daemon = buildFHSEnv {
-    pname = "tprintdaemon";
-    inherit version meta;
-    targetPkgs = _: turboprint.buildInputs ++ [ turboprint ];
-    runScript = "${turboprint}/bin/tprintdaemon";
-  };
+  mkEnv =
+    name: cmd:
+    buildFHSEnv {
+      pname = name;
+      inherit version meta;
+      targetPkgs = _: turboprint.buildInputs ++ [ turboprint ];
+      runScript = cmd turboprint;
+    };
 
 }

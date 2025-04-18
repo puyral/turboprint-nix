@@ -35,11 +35,11 @@
         formatter = treefmtEval.config.build.wrapper;
         packages = rec {
           turboprint = turboprintPkgs.withEnv;
-          tprintdaemon = turboprintPkgs.daemon;
 
           default = turboprint;
         };
         nixosModules = module;
+        mkFHSEnv = turboprintPkgs.mkEnv;
       }
     );
 }
