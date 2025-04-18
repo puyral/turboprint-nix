@@ -91,7 +91,7 @@ in
             description = "Turboprint Monitor Daemon";
             after = [
               "cups.service"
-              config.systemd.services.turboprint-setup.name
+              # config.systemd.services.turboprint-setup.name
             ];
             path = [ pkgs.procps ];
             serviceConfig = {
