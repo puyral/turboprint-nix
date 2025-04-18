@@ -82,8 +82,9 @@ in
             ExecReload = tbd "restart";
           };
         };
-      systemd.user.services.turboprint.user = {
+      systemd.user.services.turboprint = {
         enable = true;
+        name ="turboprint.user.service";
         wantedBy = [ "default.target" ];
         description = "Turboprint User Service";
         serviceConfig = {
