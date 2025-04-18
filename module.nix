@@ -1,5 +1,10 @@
 { mkEnv, ... }:
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.services.turboprint;
 in
@@ -58,33 +63,51 @@ in
         			TPCONVERT_PDF=0
         		'';
 
-      systemd.services.turboprint =
-        let
-          tbd =
-            c:
-            mkPath {
-              name = "tpdaemon-${c}";
-              path = "lib/turboprint/tpdaemon ${c}";
+      systemd.services = {
+        #       turboprint-setup = {
+        #         enable = true;
+        #         wantedBy = [ "multi-user.target" ];
+        #         serviceConfig = {
+        #           Type = "onshot";
+        #           ExecStart = ''
+        # mkdir -p /var/spool/turboprint
+        # chown -R ${cfg.deamon.user}:${cfg.deamon.group} /var/spool/turboprint
+        #           '';
+        #         };
+        #       };
+
+        turboprint =
+          let
+            tbd =
+              c:
+              mkPath {
+                name = "tpdaemon-${c}";
+                path = "lib/turboprint/tpdaemon ${c}";
+              };
+          in
+          {
+            enable = true;
+            wantedBy = [ "multi-user.target" ];
+            description = "Turboprint Monitor Daemon";
+            after = [
+              "cups.service"
+              config.systemd.services.turboprint-setup.name
+            ];
+            path = [ pkgs.procps ];
+            serviceConfig = {
+              Type = "forking";
+              Restart = "on-failure";
+              PIDFile = "/var/spool/turboprint/tpdaemon.pid";
+              RemainAfterExit = "no";
+              ExecStart = tbd "start";
+              ExecStop = tbd "stop";
+              ExecReload = tbd "restart";
             };
-        in
-        {
-          enable = true;
-          wantedBy = [ "multi-user.target" ];
-          description = "Turboprint Monitor Daemon";
-          after = [ "cups.service" ];
-          serviceConfig = {
-            Type = "forking";
-            Restart = "on-failure";
-            PIDFile = "/var/spool/turboprint/tpdaemon.pid";
-            RemainAfterExit = "no";
-            ExecStart = tbd "start";
-            ExecStop = tbd "stop";
-            ExecReload = tbd "restart";
           };
-        };
+      };
       systemd.user.services.turboprint = {
         enable = true;
-        name ="turboprint.user.service";
+        name = "turboprint.user.service";
         wantedBy = [ "default.target" ];
         description = "Turboprint User Service";
         serviceConfig = {
