@@ -52,6 +52,7 @@ in
       wantedBy = [ "multi-user.target" ];
       serviceConfig = {
         Restart = "always";
+        StateDirectory = "turboprint";
         WorkingDirectory = "/var/lib/turboprint";
         ExecStart = "${daemon}/bin/tprintdaemon";
       };
